@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Drop Slicer</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <canvas id="game" aria-label="Drop Slicer game area"></canvas>
+
+      <section class="hud" aria-label="Game status">
+        <div>
+          <span class="label">Level</span>
+          <strong id="level">1</strong>
+        </div>
+        <div>
+          <span class="label">Score</span>
+          <strong id="score">0</strong>
+        </div>
+        <div>
+          <span class="label">Coins</span>
+          <strong id="coins">0</strong>
+        </div>
+        <div>
+          <span class="label">Bowl</span>
+          <strong id="misses">0 / 3</strong>
+        </div>
+      </section>
+
+      <section class="meter" aria-label="Level progress">
+        <span id="progressFill"></span>
+      </section>
+
+      <section id="startPanel" class="panel">
+        <h1>Drop Slicer</h1>
+        <p>Slice falling water drops before they splash into the bowl. Big drops need more cuts. Do not touch purple drops.</p>
+        <button id="startButton">Start Game</button>
+      </section>
+
+      <section id="levelPanel" class="panel hidden">
+        <h2 id="levelTitle">Level Complete</h2>
+        <p id="levelReward">You earned 0 coins.</p>
+        <button id="nextButton">Next Level</button>
+      </section>
+
+      <section id="shopPanel" class="panel hidden shop">
+        <h2>Level Shop</h2>
+        <p id="shopReward">Spend coins on sharper slices or a new look.</p>
+        <div class="shopGrid">
+          <button class="shopItem" data-item="fish">
+            <strong>Fish Drops</strong>
+            <span>30 coins</span>
+          </button>
+          <button class="shopItem" data-item="blade">
+            <strong>Silver Sword</strong>
+            <span>20 coins</span>
+          </button>
+          <button class="shopItem" data-item="storm">
+            <strong>Storm Sword</strong>
+            <span>45 coins</span>
+          </button>
+        </div>
+        <button id="leaveShopButton">Continue</button>
+      </section>
+
+      <section id="gameOverPanel" class="panel hidden">
+        <h2>Game Over</h2>
+        <p id="finalStats">The bowl overflowed.</p>
+        <button id="restartButton">Play Again</button>
+      </section>
+    </main>
+
+    <script src="game-core.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>
