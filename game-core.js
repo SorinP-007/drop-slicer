@@ -2,17 +2,19 @@
   "use strict";
 
   const backgrounds = [
-    { name: "Forest", top: "#163c2a", bottom: "#07151c", accent: "#69d38f" },
-    { name: "Desert", top: "#b8742c", bottom: "#27170e", accent: "#ffd37a" },
-    { name: "Ocean", top: "#0a6c8d", bottom: "#061827", accent: "#54e2ff" },
-    { name: "Sky", top: "#528fd4", bottom: "#10223d", accent: "#fff0a6" },
-    { name: "Glacier", top: "#8ed8ed", bottom: "#16304a", accent: "#e8fbff" }
+    { name: "Candy Forest", top: "#55d68c", middle: "#63d8ff", bottom: "#fff07a", accent: "#ff70b8", sun: "#fff58a" },
+    { name: "Rainbow Desert", top: "#ffb347", middle: "#ffdf6e", bottom: "#7bdff2", accent: "#ff6f91", sun: "#fff2a8" },
+    { name: "Coral Ocean", top: "#39c5ff", middle: "#2ee6a6", bottom: "#0d6fa8", accent: "#ffcf56", sun: "#f7fbff" },
+    { name: "Balloon Sky", top: "#74c9ff", middle: "#b892ff", bottom: "#ffe174", accent: "#ff7aa8", sun: "#fff6a5" },
+    { name: "Crystal Glacier", top: "#b8f7ff", middle: "#94d3ff", bottom: "#d8b4ff", accent: "#ff8bd1", sun: "#ffffff" },
+    { name: "Festival Night", top: "#4423a8", middle: "#0a9bd8", bottom: "#ffcc4d", accent: "#ff5f8f", sun: "#fff172" }
   ];
 
   const shopItems = {
     fish: { cost: 30, label: "Fish Drops" },
     blade: { cost: 20, label: "Silver Sword" },
-    storm: { cost: 45, label: "Storm Sword" }
+    storm: { cost: 45, label: "Storm Sword" },
+    life: { cost: 15, label: "Extra Life" }
   };
 
   function mulberry32(seed) {
@@ -36,6 +38,7 @@
       score: 0,
       coins: 0,
       misses: 0,
+      maxMisses: 3,
       targetCuts: 16,
       completedCuts: 0,
       drops: [],
@@ -79,13 +82,14 @@
     state.spawnTimer = 0.25;
     state.levelTime = 0;
     state.shopOpen = false;
-    state.background = backgrounds[Math.floor((state.level - 1) / 3) % backgrounds.length];
+    state.background = backgrounds[(state.level - 1) % backgrounds.length];
   }
 
   function startGame(state) {
     state.level = 1;
     state.score = 0;
     state.coins = 0;
+    state.maxMisses = 3;
     state.inventory.fish = false;
     state.inventory.blade = 1;
     state.inventory.storm = false;
@@ -122,7 +126,7 @@
     const scoreBonus = state.completedCuts >= state.targetCuts + 6 ? 5 : 0;
     state.lastReward = config.rewardBase + accuracyBonus + scoreBonus;
     state.coins += state.lastReward;
-    state.status = state.level % 10 === 0 ? "shop" : "levelComplete";
+    state.status = state.level % 2 === 0 ? "shop" : "levelComplete";
     state.shopOpen = state.status === "shop";
     state.drops.length = 0;
   }
@@ -156,7 +160,7 @@
         if (!drop.purple) {
           state.misses += 1;
           addSplash(state, drop.x, state.height - 58, "#bcecff");
-          if (state.misses >= 3) loseGame(state);
+          if (state.misses >= state.maxMisses) loseGame(state);
         }
       }
     }
@@ -182,7 +186,7 @@
           state.misses += 1;
           state.drops.splice(i, 1);
           addSplash(state, drop.x, drop.y, "#b36bff");
-          if (state.misses >= 3) loseGame(state);
+          if (state.misses >= state.maxMisses) loseGame(state);
           break;
         }
 
@@ -223,6 +227,10 @@
     if (key === "fish") state.inventory.fish = true;
     if (key === "blade") state.inventory.blade = 2;
     if (key === "storm") state.inventory.storm = true;
+    if (key === "life") {
+      state.maxMisses += 1;
+      state.misses = Math.max(0, state.misses - 1);
+    }
     return true;
   }
 
