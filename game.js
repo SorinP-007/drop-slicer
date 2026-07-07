@@ -48,7 +48,7 @@
       ui.levelReward.textContent = `You earned ${state.lastReward} coins.`;
     }
     if (state.status === "shop") {
-      ui.shopReward.textContent = `You earned ${state.lastReward} coins. Spend coins on sharper slices or a new look.`;
+      ui.shopReward.textContent = `You earned ${state.lastReward} coins. Buy sharper slices, a new look, or extra lives.`;
       refreshShopButtons();
     }
     if (state.status === "gameOver") {
@@ -60,7 +60,7 @@
     ui.level.textContent = state.level;
     ui.score.textContent = state.score;
     ui.coins.textContent = state.coins;
-    ui.misses.textContent = `${state.misses} / 3`;
+    ui.misses.textContent = `${state.misses} / ${state.maxMisses}`;
     ui.progressFill.style.width = `${Math.min(100, (state.completedCuts / state.targetCuts) * 100)}%`;
   }
 
@@ -80,13 +80,20 @@
     const bg = state.background;
     const gradient = ctx.createLinearGradient(0, 0, 0, state.height);
     gradient.addColorStop(0, bg.top);
+    gradient.addColorStop(0.52, bg.middle);
     gradient.addColorStop(1, bg.bottom);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, state.width, state.height);
 
-    ctx.globalAlpha = 0.28;
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = bg.sun;
+    ctx.beginPath();
+    ctx.arc(state.width - 92, 118, 46, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 0.42;
     ctx.fillStyle = bg.accent;
-    if (bg.name === "Forest") {
+    if (bg.name === "Candy Forest") {
       for (let x = -40; x < state.width + 80; x += 95) {
         ctx.beginPath();
         ctx.moveTo(x, state.height - 64);
@@ -94,13 +101,13 @@
         ctx.lineTo(x + 84, state.height - 64);
         ctx.fill();
       }
-    } else if (bg.name === "Desert") {
+    } else if (bg.name === "Rainbow Desert") {
       for (let x = -80; x < state.width + 120; x += 220) {
         ctx.beginPath();
         ctx.ellipse(x + 90, state.height - 66, 120, 34, 0, 0, Math.PI * 2);
         ctx.fill();
       }
-    } else if (bg.name === "Ocean") {
+    } else if (bg.name === "Coral Ocean") {
       for (let y = 170; y < state.height - 80; y += 58) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -109,11 +116,20 @@
         ctx.lineWidth = 3;
         ctx.stroke();
       }
-    } else if (bg.name === "Sky") {
+    } else if (bg.name === "Balloon Sky") {
       for (let x = 40; x < state.width; x += 190) {
         ctx.beginPath();
-        ctx.ellipse(x, 190, 62, 20, 0, 0, Math.PI * 2);
-        ctx.ellipse(x + 44, 184, 42, 18, 0, 0, Math.PI * 2);
+        ctx.ellipse(x, 190, 42, 56, 0, 0, Math.PI * 2);
+        ctx.moveTo(x, 246);
+        ctx.lineTo(x - 12, 270);
+        ctx.lineTo(x + 12, 270);
+        ctx.closePath();
+        ctx.fill();
+      }
+    } else if (bg.name === "Festival Night") {
+      for (let x = 30; x < state.width; x += 90) {
+        ctx.beginPath();
+        ctx.arc(x, 150 + Math.sin(x) * 18, 9, 0, Math.PI * 2);
         ctx.fill();
       }
     } else {
@@ -148,14 +164,19 @@
     ctx.save();
     ctx.translate(drop.x, drop.y);
     if (drop.purple) {
-      ctx.fillStyle = "#a85cff";
+      ctx.fillStyle = "#d000ff";
     } else if (state.inventory.fish) {
       ctx.fillStyle = drop.hp > 1 ? "#ff9f43" : "#48d597";
     } else {
       ctx.fillStyle = drop.hp > 1 ? "#58cfff" : "#9feaff";
     }
-    ctx.strokeStyle = drop.purple ? "#ead8ff" : "#eefcff";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = drop.purple ? "#fff45c" : "#eefcff";
+    ctx.lineWidth = drop.purple ? 5 : 2;
+
+    if (drop.purple) {
+      ctx.shadowColor = "#ff4dff";
+      ctx.shadowBlur = 18;
+    }
 
     if (state.inventory.fish && !drop.purple) {
       ctx.beginPath();
@@ -191,6 +212,17 @@
       ctx.font = "800 14px system-ui";
       ctx.textAlign = "center";
       ctx.fillText(String(drop.hp), 0, 5);
+    }
+    if (drop.purple) {
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = "#fff45c";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-drop.radius * 0.45, -drop.radius * 0.25);
+      ctx.lineTo(drop.radius * 0.45, drop.radius * 0.45);
+      ctx.moveTo(drop.radius * 0.45, -drop.radius * 0.25);
+      ctx.lineTo(-drop.radius * 0.45, drop.radius * 0.45);
+      ctx.stroke();
     }
     ctx.restore();
   }
