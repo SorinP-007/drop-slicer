@@ -30,6 +30,7 @@ function runGame(seed) {
       if (core.buyItem(state, "blade")) purchases += 1;
       if (core.buyItem(state, "fish")) purchases += 1;
       if (core.buyItem(state, "storm")) purchases += 1;
+      if (core.buyItem(state, "life")) purchases += 1;
       core.nextLevel(state);
     }
 
